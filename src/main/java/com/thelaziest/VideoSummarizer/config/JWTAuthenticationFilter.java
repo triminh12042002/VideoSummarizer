@@ -59,7 +59,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
 //            final String userEmail = jwtService.extractUsername(jwtToken);
 
-            try {
+//            try {
                 // Extract and validate the token
                 final String userEmail = jwtService.extractUsername(jwtToken);
 
@@ -90,11 +90,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
                 filterChain.doFilter(request, response);
 
-            } catch (Exception e) {
-                System.out.println("jwt token error: " + e.getMessage());
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("jwt token error");
-            }
+//            } catch (Exception e) {
+//                System.out.println("jwt token error: " + e.getMessage());
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                response.getWriter().write("jwt token error");
+//            }
 
 
         } catch (Exception e) {
