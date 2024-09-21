@@ -6,6 +6,7 @@ import com.thelaziest.VideoSummarizer.dto.RegisterUserDTO;
 import com.thelaziest.VideoSummarizer.model.User;
 import com.thelaziest.VideoSummarizer.service.AuthenticationService;
 import com.thelaziest.VideoSummarizer.service.JWTService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,15 +23,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> registerUser(@RequestBody RegisterUserDTO registerUserDTO) {
+    public ResponseEntity<?> registerUser(@RequestBody RegisterUserDTO registerUserDTO) {
         System.out.println(registerUserDTO.toString());
         System.out.println("Sign up");
         User registeredUser = authenticationService.signUp(registerUserDTO);
-
-        return ResponseEntity.ok(registeredUser);
+        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDTO loginUserDTO) {
         User authenticatedUser = authenticationService.authenticate(loginUserDTO);
 

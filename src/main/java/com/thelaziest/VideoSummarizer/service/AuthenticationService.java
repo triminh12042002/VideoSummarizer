@@ -23,9 +23,9 @@ public class AuthenticationService {
         this.authenticationManager = authenticationManager;
     }
 
-    public User signUp(RegisterUserDTO userDTO){
+    public User signUp(RegisterUserDTO userDTO) {
         User user = new User()
-                .setFullName(userDTO.getFullName())
+                .setFullName(userDTO.getName())
                 .setEmail(userDTO.getEmail())
                 .setPassword(passwordEncoder.encode(userDTO.getPassword()));
 

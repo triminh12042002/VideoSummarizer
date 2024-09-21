@@ -8,14 +8,7 @@ public class RegisterUserDTO {
 
     private String password;
 
-    private String fullName;
+    private String name;
 
-    @Override
-    public String toString() {
-        return "RegisterUserDTO{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", fullName='" + fullName + '\'' +
-                '}';
-    }
+    private String fullName;
 }

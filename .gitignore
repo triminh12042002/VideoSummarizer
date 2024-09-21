@@ -5,7 +5,8 @@ target/
 !**/src/test/**/target/
 
 src/main/resources/application.properties
-
+src/main/resources/video
+src/main/resources/transcript
 
 ### STS ###
 .apt_generated
