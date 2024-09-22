@@ -8,8 +8,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.thelaziest.VideoSummarizer.video.Paragraph;
 import com.thelaziest.VideoSummarizer.video.Sentence;
+import com.thelaziest.VideoSummarizer.video.VideoUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ApplicationContext;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -24,19 +28,21 @@ import java.util.Date;
 import java.util.List;
 
 import static com.thelaziest.VideoSummarizer.video.TranscriptUtils.buildParagraphFromSentence;
-import static com.thelaziest.VideoSummarizer.video.VideoUtils.cutAndMergeVideoBySentences;
+import static com.thelaziest.VideoSummarizer.video.VideoUtils.*;
 
 @SpringBootApplication
 public class VideoSummarizerApplication {
 
-	@Value("assemblyai.api.key")
-	private static String apiKey;
-
 	public static void main(String[] args) {
 
-//		SpringApplication.run(VideoSummarizerApplication.class, args);
+//		ApplicationContext context = SpringApplication.run(VideoSummarizerApplication.class, args);
+		String videoPath = "src/main/resources/video/input/Why Messi Is better than ronaldo _720pFH.mp4";
+//		String audioPath = convertVideoToAudio(videoPath);
 
-//		loadTranscript();
+//		VideoUtils videoUtils = context.getBean(VideoUtils.class);
+//		String audioPath ="src/main/resources/video/audio/Why Messi Is better than ronaldo _720pFH.mp3";
+//		videoUtils.loadTranscript(audioPath);
+//
 		String paragraphsPath = "paragraphsAudioTranscript.json";
 		List<Paragraph> paragraphs = ConvertJsonToObject(paragraphsPath, Paragraph.class);
 
@@ -47,9 +53,8 @@ public class VideoSummarizerApplication {
 
 //		visualizeParagraph(paragraphs);
 
-		String inputPath = "src/main/video/SnapSave.io-The Entire History Of Cristiano Ronaldo.mp4";
-		String outputPath = "output.mp4";
-		cutAndMergeVideoBySentences(inputPath, outputPath, paragraphs);
+		String outputPath = "src/main/resources/video/output/video2/output.mp4";
+		cutAndMergeVideoBySentences(videoPath, outputPath, paragraphs);
 	}
 
 	public static void visualizeParagraph(List<Paragraph> paragraphs){
@@ -67,68 +72,8 @@ public class VideoSummarizerApplication {
 		String time = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date(mills + 16 * 60 * 60 * 1000));
 		return time;
 	}
-	public static void loadTranscript(){
-//		convert video to audio
-//		VideoUtils videoUtils = new VideoUtils();
-//		videoUtils.convertVideoToAudio("src/main/video/The Entire History Of Cristiano Ronaldo.mp4");
 
 
-		String audioPath = "videoInfo.mp3";
-
-		try{
-			var client = AssemblyAI.builder()
-					.apiKey(apiKey)
-					.build();
-
-// 			for first time upload file
-//			var uploadedFile = client.files().upload(new File(audioPath));
-//			var fileUrl = uploadedFile.getUploadUrl();
-
-// 			for after first time, use the uploaded file url, get from log
-			var fileUrl = "https://cdn.assemblyai.com/upload/0aa5a092-dee1-4254-b93e-e38aeba553ce";
-
-			var transcriptionParams = TranscriptParams.builder()
-					.audioUrl(fileUrl)
-					.autoChapters(true)
-					.build();
-
-			var transcript = client.transcripts().transcribe(transcriptionParams);
-
-
-			if (transcript.getStatus() == TranscriptStatus.ERROR) {
-				throw new Exception("Transcript failed with error: " + transcript.getError().get());
-			}
-
-			var sentences = client.transcripts().getSentences(transcript.getId());
-			var paragraphs = client.transcripts().getParagraphs(transcript.getId());
-
-//			print by chapters
-//			List<Chapter> chapters = transcript.getChapters().get();
-//			chapters.forEach(chapter -> {
-//				System.out.println(chapter.getStart() + " - " + chapter.getEnd());
-//			});
-
-//			System.out.println(transcript.getText().get().substring(0, 20)));
-
-
-//			save transcript to file
-			Path outputPath = Paths.get("audioTranscript.json");
-			Path sentencesOutputPath = Paths.get("sentences" + "AudioTranscript.json");
-			Path paragraphsOutputPath = Paths.get("paragraphs" + "AudioTranscript.json");
-			try{
-//				Files.writeString(outputPath,transcript.toString(), StandardCharsets.UTF_8);
-				Files.writeString(sentencesOutputPath,sentences.getSentences().toString(), StandardCharsets.UTF_8);
-				Files.writeString(paragraphsOutputPath,paragraphs.getParagraphs().toString(), StandardCharsets.UTF_8);
-			}
-			catch (Exception e) {
-				System.out.println("Invalid path");
-				System.out.println("Error:" + e.getMessage());
-			}
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
 
 	public static <T> List<T> ConvertJsonToObject(String filePath, Class<T> convertType) {
 		try {
